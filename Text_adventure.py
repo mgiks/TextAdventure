@@ -4,12 +4,13 @@ import time
 
 class Enemy:
     
-    def __init__(self,hp,attack_min,attack_max,name):
+    def __init__(self,hp, attack_min, attack_max, name):
         self.enemy_hp = hp
         self.enemy_attack_min = attack_min
         self.enemy_attack_max = attack_max
         self.enemy_name = name
 
+#Types of enemies
 goblin = Enemy(20, 1, 10,"Goblin")
 guardian = Enemy(50, 10, 25, "Guardian")
 dragon = Enemy(100,25,50,"Dragon")
