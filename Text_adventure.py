@@ -10,7 +10,7 @@ class Enemy:
         self.enemy_attack_max = attack_max
         self.enemy_name = name
 
-#Types of enemies
+#Types of enemies 
 goblin = Enemy(20, 1, 10,"Goblin")
 guardian = Enemy(50, 10, 25, "Guardian")
 dragon = Enemy(100,25,50,"Dragon")
