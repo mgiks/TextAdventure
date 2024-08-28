@@ -6,6 +6,8 @@ def typeText(text, speed):
     delay = 0
     
     match speed:
+        case 1:
+            delay = 0.05
         case 2:
             delay = 0.035
         case 3:
@@ -19,6 +21,8 @@ def typeText(text, speed):
         if character == " ":
             continue
         time.sleep(delay)
+    
+    sys.stdout.write("\n")
 
 class Player:
     health = 100
@@ -29,11 +33,23 @@ class Player:
     coordinates = [(0,0)]
     
     @classmethod
+    def stats(cls):
+        typeText("Stats:", 3)
+        typeText(f"-health: {cls.health}", 3)
+        typeText(f"-min_attack: {cls.min_attack}", 3)
+        typeText(f"-max_attack: {cls.max_attack}", 3)
+        typeText(f"-defense {cls.defense}", 3)
+        typeText(f"-luck: {cls.luck}", 3)
+
+    @classmethod
     def step(cls):
         typeText("\nWhere are you headed?(F,B,L,R): ", 2)
         direction = input().lower()
         
         match direction:
+            case "f":
+                print("Go forward")
+                cls.coordinates.append((cls.coordinates[-1][0],cls.coordinates[-1][1] + 1))
             case "b":
                 print("Go back")
                 cls.coordinates.append((cls.coordinates[-1][0],cls.coordinates[-1][1] - 1))
@@ -43,9 +59,6 @@ class Player:
             case "r":
                 print("Go right")
                 cls.coordinates.append((cls.coordinates[-1][0] + 1,cls.coordinates[-1][1]))
-            case _:
-                print("Go forward")
-                cls.coordinates.append((cls.coordinates[-1][0],cls.coordinates[-1][1] + 1))
             
     @classmethod
     def openChest(cls):
@@ -105,24 +118,23 @@ class Room():
         
         match element:
             case "Water":
-                text = ("You wake up to the sound of dripping water from the ceiling."
-                        "Your eyes barely adjust to the darkness around you.")
+                text = ("You wake up to the sound of dripping water from the ceiling.\n"
+                        "Your eyes barely adjust to the darkness around you.\n")
             case "Fire":
-                text = """You wake up to the sound of crackling fire.
-                Your eyes barely adjust to the brightness around you.\n"""
+                text = ("You wake up to the sound of crackling fire.\n"
+                        "Your eyes barely adjust to the brightness around you.\n")
             case "Dust":
-                text = """You wake up to the smell of dust.
-                        Your rub your itchy eyes.\n"""
+                text = ("You wake up to the smell of dust.\n"
+                        "Your rub your itchy eyes.\n")
                         
-        text += """You get up and start planning your next step.
-        You realize there're 4 exists out of this room."""
+        text += ("You get up and start planning your next step.\n"
+        "You realize there're 4 exists out of this room.")
         typeText(text, 1)
                 
         Player.step()
 
     def enterChestRoom():
         pass
-    
 
 # class Enemy:
 #     def __init__(self, element, enemy_type, hp, min_attack, max_attack):
