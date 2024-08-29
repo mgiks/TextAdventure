@@ -25,21 +25,21 @@ def typeText(text, speed):
     sys.stdout.write("\n")
 
 class Player:
-    health = 100
-    min_attack = 10
-    max_attack = 20
-    defense = 0
-    luck = 0
+    stats = {"health" : 100,
+             "min_attack" : 10,
+             "max_attack" : 20,
+             "defense" : 0,
+             "luck" : 0}
     coordinates = [(0,0)]
     
     @classmethod
-    def stats(cls):
-        typeText("Stats:", 3)
-        typeText(f"-health: {cls.health}", 3)
-        typeText(f"-min_attack: {cls.min_attack}", 3)
-        typeText(f"-max_attack: {cls.max_attack}", 3)
-        typeText(f"-defense {cls.defense}", 3)
-        typeText(f"-luck: {cls.luck}", 3)
+    def print_stats(cls):
+        for stat in cls.stats:
+            typeText(f"{stat} : {cls.stats[stat]}", 3)
+        
+    @classmethod
+    def get_stats(cls):
+        return cls.stats
 
     @classmethod
     def step(cls):
@@ -86,27 +86,31 @@ class Player:
             print(".....")
             
 class Item:
+    items = {"Strength":["Sword", "Gauntlet", "Dagger"],
+             "Defence":["Shield", "Helmet", "Chestplate"],
+             "Health":["Herbs", "Bandages", "Health Potion"],
+             "General":["Necklace", "Stone", "Fruit"]}
     
-    items = {"attack_items":["Sword", "Gauntlet", "Dagger"],
-             "defense_items":["Shield", "Helmet", "Chestplate"],
-             "health_items":["Herbs", "Bandages", "Health Potion"],
-             "general_items":["Necklace", "Stone", "Fruit"]}
+    item_specializations = {"Strength":['min_attack', 'max_attack'], 
+                       "Defence":['defense'],
+                       "Health":['health'], 
+                       "General":['health', 'min_attack', 'max_attack', 'defense', 'luck']}
     
-    item_attributes = {"Strength":Player.min_attack, 
-                       "Power":Player.max_attack, 
-                       "Health":Player.health, 
-                       "Luck":Player.luck, 
-                       "Defence":Player.defense}
-    
-    item_qualities = {"Weakened":1, "":5, "Enhanced":10, "Mysterious":100}
+    item_qualities = {"Weakened":1, "Common":5, "Rare":10, "Legendary":100}
     
     @classmethod
     def getRandomItem(cls):
-        item = random.choice(cls.items[random.choice(cls.items.keys())])
-        item_attribute = random.choice(cls.item_attributes)
-        item_quality = random.choice(cls.item_qualities)
-        #Finish please
-
+        item_type = random.choice(list(cls.items.keys()))
+        item = random.choice(cls.items[item_type])
+        item_specialization = random.choice(cls.item_specializations[item_type])
+        item_quality = random.choice(list(cls.item_qualities.keys()))
+        power = cls.item_qualities[item_quality]
+        
+        Player.get_stats()[item_specialization] += power
+                
+        typeText(f"You found {item_quality} {item}", 1)
+        typeText(f"Your {item_specialization} has increased by {power}", 1)
+        
 class Room():
     chest_luck = ["filled", "empty"]
     element = ""
@@ -198,3 +202,5 @@ class Room():
 #     def enemyRoom(self):
 #         typeText(f"\nEnemy hp: {self.cur_enemy_hp} \nPlayer hp: {self.hp}\n",1)
 #         typeText("\nAttack or Flee(A/F)",1)
+
+Item.getRandomItem()
