@@ -67,11 +67,7 @@ class Player:
         choice = input().lower()
         
         if choice == "y":
-            if random.randint(1,100) != 1:
-                #placeholder for some action
-                pass
-            else:
-                cls.die()
+            Item.getRandomItem()            
         else:
             pass
     
@@ -113,7 +109,11 @@ class Item:
         
 class Room():
     chest_luck = ["filled", "empty"]
+    firstRoomPass = 0
     element = ""
+    
+    def getRandomRoom():
+        pass
     
     @staticmethod
     def enterStartRoom():  
@@ -134,11 +134,15 @@ class Room():
         text += ("You get up and start planning your next step.\n"
         "You realize there're 4 exists out of this room.")
         typeText(text, 1)
-                
+
+        firstRoomPass = 1
+
         Player.step()
 
     def enterChestRoom():
-        pass
+        text = "You enter a chest room"
+        typeText(text, 2)
+        Player.openChest()
 
 # class Enemy:
 #     def __init__(self, element, enemy_type, hp, min_attack, max_attack):
@@ -202,5 +206,3 @@ class Room():
 #     def enemyRoom(self):
 #         typeText(f"\nEnemy hp: {self.cur_enemy_hp} \nPlayer hp: {self.hp}\n",1)
 #         typeText("\nAttack or Flee(A/F)",1)
-
-Item.getRandomItem()
