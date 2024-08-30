@@ -59,7 +59,30 @@ class Player:
             case "r":
                 print("Go right")
                 cls.coordinates.append((cls.coordinates[-1][0] + 1,cls.coordinates[-1][1]))
-            
+                
+    @classmethod
+    def attack(cls):
+        damage = random.randint(Player.get_stats()["min_attack"], Player.get_stats()["max_attack"] + 1)
+        text = f"You did {damage} damage"
+
+        typeText(text, 3)
+        
+        return damage
+
+    @staticmethod
+    def flee():
+        attempt = random.choice(range(2))
+
+        if attempt:
+            typeText("You flee the battle!", 3)
+        else:
+            typeText("You fail to flee", 3)
+
+        return attempt
+
+    def fail_action():
+        typeText("You can't do that", 3)
+    
     @classmethod
     def openChest(cls):
         typeText("\nChest in front of you...",0)
@@ -144,38 +167,56 @@ class Room():
         typeText(text, 2)
         Player.openChest()
 
-# class Enemy:
-#     def __init__(self, element, enemy_type, hp, min_attack, max_attack):
-#         self.name = element + " " + enemy_type
-#         self.hp = hp
-#         self.min_attack = min_attack
-#         self.max_attack = max_attack
+class Enemy:
+    def __init__(self, element, enemy_type, enemy_hp, enemy_min_attack, enemy_max_attack):
+        self.enemy_name = element + " " + enemy_type
+        self.enemy_hp = enemy_hp
+        self.enemy_min_attack = enemy_min_attack
+        self.enemy_max_attack = enemy_max_attack
+        
+    def attack(self):
+        enemy_damage = random.randint(self.enemy_min_attack, self.enemy_max_attack + 1)
+        text = f"{self.enemy_name} did {enemy_damage} damage"
 
-#     def fight(self):
+        typeText(text, 3)
+        
+        return enemy_damage
 
-#         while self.hp > 0 and self.cur_enemy_hp > 0:
-#             a_f = input(": ").lower()
-#             if a_f == "a":
-#                 attack = random.randint(self.attack_min, self.attack_max + 1)
-#                 self.cur_enemy_hp -= attack
-#                 typeText(f"\nYou did {attack} dmg",1)
-#             elif a_f == "f" and (random.randint(0,100) <= 50):
-#                 typeText("\nYou succesfully fleed the battle!\n",0)
-#                 self.step()
-#                 break
-#             else:
-#                 typeText("\nTry again next time",1)
-#             if self.cur_enemy_hp > 0:
-#                 enemy_attack = random.randint(self.cur_enemy.enemy_attack_min, self.cur_enemy.enemy_attack_max)
-#                 self.hp -= enemy_attack
-#                 typeText(f"\nYou've been hit with {enemy_attack} dmg",1)
+    def fight(self):
+        lost_won = 0
+        while Player.get_stats()["health"] > 0 and self.enemy_hp > 0:
+            choice = input("Attack or Flee [A/F]: ").lower()
+            
+            match choice:
+                case "a":
+                    damage = Player.attack()
+                    self.enemy_hp -= damage
+                    text = f"{self.enemy_name} health = {self.enemy_hp}"
+                    typeText(text, 3)     
+                     
+                    if self.enemy_hp <= 0:
+                        lost_won_fleed = 1
+                case "f":
+                    attempt = Player.flee()
+                    if attempt:
+                        lost_won = 2
+                        break
+                case _:
+                    Player.fail_action()
+                                 
+            if self.enemy_hp > 0:
+                enemy_damage = self.attack()
+                Player.get_stats()["health"] -= enemy_damage
+                text = f"Your health = {Player.get_stats()["health"]}"
+                typeText(text, 3)
 
-#         if self.hp > 0:
-#             typeText("\n\nYou've succesfully defeated the enemy\n",0)
-#             self.hp = 100
-#             self.items(0)
-#         else:
-#             self.death()
+        match lost_won:
+            case 1:
+                typeText("You succesfully defeat the enemy!", 2)
+            case 0:
+                Player.die()           
+            case 2:
+                pass     
     
 # class Room:
 #     def __init__(self):
@@ -206,3 +247,6 @@ class Room():
 #     def enemyRoom(self):
 #         typeText(f"\nEnemy hp: {self.cur_enemy_hp} \nPlayer hp: {self.hp}\n",1)
 #         typeText("\nAttack or Flee(A/F)",1)
+
+Goblin = Enemy("Water", "Goblin", 100, 1, 10)
+Goblin.fight()
