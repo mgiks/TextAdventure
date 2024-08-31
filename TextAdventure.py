@@ -31,6 +31,7 @@ class Player:
              "defense" : 0,
              "luck" : 0}
     coordinates = [(0,0)]
+    chest_has_item = [True, False]
     
     @classmethod
     def print_stats(cls):
@@ -79,21 +80,24 @@ class Player:
             typeText("You fail to flee", 3)
 
         return attempt
-
+    
+    @staticmethod    
     def fail_action():
         typeText("You can't do that", 3)
     
     @classmethod
     def openChest(cls):
-        typeText("\nChest in front of you...",0)
-        typeText("\nOpen it?(Y/N): ",1)
+        typeText("\nOpen chest?(Y/N): ",1)
         choice = input().lower()
+        chest_has_item = random.choice(cls.chest_has_item)
         
         if choice == "y":
-            Item.getRandomItem()            
-        else:
-            pass
-    
+            if chest_has_item:
+                return Item.getRandomItem()
+            else:
+                text = "No item..."
+                typeText(text, 1)
+                    
     @staticmethod
     def die():
         typeText("\n\nYou are dead...\n", 0)
@@ -131,7 +135,7 @@ class Item:
         typeText(f"Your {item_specialization} has increased by {power}", 1)
         
 class Room():
-    chest_luck = ["filled", "empty"]
+    
     firstRoomPass = 0
     element = ""
     
@@ -162,11 +166,51 @@ class Room():
 
         Player.step()
 
+    @staticmethod
     def enterChestRoom():
         text = "You enter a chest room"
         typeText(text, 2)
         Player.openChest()
+    
+    @classmethod
+    def enterEnemyRoom(cls):
+        enemy = Enemy("Fire", "Goblin", 500, 1, 10)
+        
+        lost_won = 0
+        while Player.get_stats()["health"] > 0 and enemy.enemy_hp > 0:
+            choice = input("Attack or Flee [A/F]: ").lower()
+            
+            match choice:
+                case "a":
+                    damage = Player.attack()
+                    enemy.enemy_hp -= damage
+                    text = f"{enemy.enemy_name} health : {enemy.enemy_hp if enemy.enemy_hp > 0 else 0}"
+                    typeText(text, 3)     
+                     
+                    if enemy.enemy_hp <= 0:
+                        lost_won = 1
+                case "f":
+                    attempt = Player.flee()
+                    if attempt:
+                        lost_won = 2
+                        break
+                case _:
+                    Player.fail_action()
+                                 
+            if enemy.enemy_hp > 0:
+                enemy_damage = enemy.attack()
+                Player.get_stats()["health"] -= enemy_damage
+                text = f"Your health = {Player.get_stats()["health"]}"
+                typeText(text, 3)
 
+        match lost_won:
+            case 1:
+                typeText(f"You succesfully defeat the {enemy.enemy_name}!", 2)
+            case 0:
+                Player.die()           
+            case 2:
+                pass
+        
 class Enemy:
     def __init__(self, element, enemy_type, enemy_hp, enemy_min_attack, enemy_max_attack):
         self.enemy_name = element + " " + enemy_type
@@ -182,42 +226,8 @@ class Enemy:
         
         return enemy_damage
 
-    def fight(self):
-        lost_won = 0
-        while Player.get_stats()["health"] > 0 and self.enemy_hp > 0:
-            choice = input("Attack or Flee [A/F]: ").lower()
-            
-            match choice:
-                case "a":
-                    damage = Player.attack()
-                    self.enemy_hp -= damage
-                    text = f"{self.enemy_name} health = {self.enemy_hp}"
-                    typeText(text, 3)     
-                     
-                    if self.enemy_hp <= 0:
-                        lost_won_fleed = 1
-                case "f":
-                    attempt = Player.flee()
-                    if attempt:
-                        lost_won = 2
-                        break
-                case _:
-                    Player.fail_action()
-                                 
-            if self.enemy_hp > 0:
-                enemy_damage = self.attack()
-                Player.get_stats()["health"] -= enemy_damage
-                text = f"Your health = {Player.get_stats()["health"]}"
-                typeText(text, 3)
+Room.enterEnemyRoom()
 
-        match lost_won:
-            case 1:
-                typeText("You succesfully defeat the enemy!", 2)
-            case 0:
-                Player.die()           
-            case 2:
-                pass     
-    
 # class Room:
 #     def __init__(self):
 #         self.start_room = ""
@@ -247,6 +257,3 @@ class Enemy:
 #     def enemyRoom(self):
 #         typeText(f"\nEnemy hp: {self.cur_enemy_hp} \nPlayer hp: {self.hp}\n",1)
 #         typeText("\nAttack or Flee(A/F)",1)
-
-Goblin = Enemy("Water", "Goblin", 100, 1, 10)
-Goblin.fight()
