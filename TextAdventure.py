@@ -2,7 +2,8 @@ import random
 import sys
 import time
 
-def typeText(text, speed):
+
+def type_text(text, speed):
     delay = 0
     
     match speed:
@@ -23,20 +24,40 @@ def typeText(text, speed):
         time.sleep(delay)
     
     sys.stdout.write("\n")
+    
 
+class RandomOutput:
+    
+    elements = ["Water", "Fire", "Dust"]
+    booleans = [True, False]
+    
+    @classmethod
+    def get_random_bool(cls):
+        result = random.choice(cls.booleans)
+        return result
+
+    @classmethod
+    def get_random_element(cls):
+        result = random.choice(cls.elements)
+        return result
+        
+    
 class Player:
-    stats = {"health" : 100,
-             "min_attack" : 10,
-             "max_attack" : 20,
-             "defense" : 0,
-             "luck" : 0}
+    
+    stats = {
+        "health" : 100,
+        "min_attack" : 10,
+        "max_attack" : 20,
+        "defense" : 0,
+        "luck" : 0
+    }
+    
     coordinates = [(0,0)]
-    chest_has_item = [True, False]
     
     @classmethod
     def print_stats(cls):
         for stat in cls.stats:
-            typeText(f"{stat} : {cls.stats[stat]}", 3)
+            type_text(f"{stat} : {cls.stats[stat]}", 3)
         
     @classmethod
     def get_stats(cls):
@@ -44,85 +65,106 @@ class Player:
 
     @classmethod
     def step(cls):
-        typeText("\nWhere are you headed?(F,B,L,R): ", 2)
+        type_text("\nWhere are you headed?(F,B,L,R): ", 2)
         direction = input().lower()
         
         match direction:
             case "f":
                 print("Go forward")
-                cls.coordinates.append((cls.coordinates[-1][0],cls.coordinates[-1][1] + 1))
+                cls.coordinates.append(
+                    (cls.coordinates[-1][0],cls.coordinates[-1][1] + 1)
+                )
             case "b":
                 print("Go back")
-                cls.coordinates.append((cls.coordinates[-1][0],cls.coordinates[-1][1] - 1))
+                cls.coordinates.append(
+                    (cls.coordinates[-1][0],cls.coordinates[-1][1] - 1)
+                )
             case "l":
                 print("Go left")
-                cls.coordinates.append((cls.coordinates[-1][0] - 1,cls.coordinates[-1][1]))
+                cls.coordinates.append(
+                    (cls.coordinates[-1][0] - 1,cls.coordinates[-1][1])
+                )
             case "r":
                 print("Go right")
-                cls.coordinates.append((cls.coordinates[-1][0] + 1,cls.coordinates[-1][1]))
+                cls.coordinates.append(
+                    (cls.coordinates[-1][0] + 1,cls.coordinates[-1][1])
+                )
                 
     @classmethod
     def attack(cls):
-        damage = random.randint(Player.get_stats()["min_attack"], Player.get_stats()["max_attack"] + 1)
+        damage = random.randint(
+            Player.get_stats()["min_attack"], Player.get_stats()["max_attack"] + 1
+        )
         text = f"You did {damage} damage"
 
-        typeText(text, 3)
+        type_text(text, 3)
         
         return damage
 
     @staticmethod
     def flee():
-        attempt = random.choice(range(2))
+        attempt = RandomOutput.get_random_bool()
 
         if attempt:
-            typeText("You flee the battle!", 3)
+            type_text("You flee the battle!", 3)
         else:
-            typeText("You fail to flee", 3)
+            type_text("You fail to flee", 3)
 
         return attempt
     
     @staticmethod    
     def fail_action():
-        typeText("You can't do that", 3)
+        type_text("You can't do that", 3)
     
     @classmethod
     def openChest(cls):
-        typeText("\nOpen chest?(Y/N): ",1)
+        type_text("\nOpen chest?(Y/N): ",1)
         choice = input().lower()
-        chest_has_item = random.choice(cls.chest_has_item)
+        chest_has_item = RandomOutput.get_random_bool()
         
         if choice == "y":
             if chest_has_item:
-                return Item.getRandomItem()
+                return Item.get_random_item()
             else:
                 text = "No item..."
-                typeText(text, 1)
+                type_text(text, 1)
                     
     @staticmethod
     def die():
-        typeText("\n\nYou are dead...\n", 0)
-        typeText("\nDo you want to restart?(Y/N): ",1)
+        type_text("\n\nYou are dead...\n", 0)
+        type_text("\nDo you want to restart?(Y/N): ",1)
         choice = input().lower()
         if choice == "y":
             pass
         else:
             print(".....")
             
+            
 class Item:
-    items = {"Strength":["Sword", "Gauntlet", "Dagger"],
-             "Defence":["Shield", "Helmet", "Chestplate"],
-             "Health":["Herbs", "Bandages", "Health Potion"],
-             "General":["Necklace", "Stone", "Fruit"]}
     
-    item_specializations = {"Strength":['min_attack', 'max_attack'], 
-                       "Defence":['defense'],
-                       "Health":['health'], 
-                       "General":['health', 'min_attack', 'max_attack', 'defense', 'luck']}
+    items = {
+        "Strength":["Sword", "Gauntlet", "Dagger"],
+        "Defence":["Shield", "Helmet", "Chestplate"],
+        "Health":["Herbs", "Bandages", "Health Potion"],
+        "General":["Necklace", "Stone", "Fruit"],
+    }
     
-    item_qualities = {"Weakened":1, "Common":5, "Rare":10, "Legendary":100}
+    item_specializations = {
+        "Strength":['min_attack', 'max_attack'], 
+        "Defence":['defense'],
+        "Health":['health'], 
+        "General":['health', 'min_attack', 'max_attack', 'defense', 'luck'],
+    }
+    
+    item_qualities = {
+        "Weakened":1, 
+        "Common":5, 
+        "Rare":10, 
+        "Legendary":100
+    }
     
     @classmethod
-    def getRandomItem(cls):
+    def get_random_item(cls):
         item_type = random.choice(list(cls.items.keys()))
         item = random.choice(cls.items[item_type])
         item_specialization = random.choice(cls.item_specializations[item_type])
@@ -131,49 +173,54 @@ class Item:
         
         Player.get_stats()[item_specialization] += power
                 
-        typeText(f"You found {item_quality} {item}", 1)
-        typeText(f"Your {item_specialization} has increased by {power}", 1)
+        type_text(f"You found {item_quality} {item}", 1)
+        type_text(f"Your {item_specialization} has increased by {power}", 1)
+        
         
 class Room():
     
     firstRoomPass = 0
     element = ""
     
-    def getRandomRoom():
+    def get_random_room():
         pass
     
     @staticmethod
-    def enterStartRoom():  
-        Player.coordinates = [(0, 0)]      
-        element = random.choice(["Water", "Fire", "Dust"])
-        
+    def enter_start_room():
+        Player.coordinates = [(0, 0)]
+        element = RandomOutput.get_random_element()
+
         match element:
             case "Water":
-                text = ("You wake up to the sound of dripping water from the ceiling.\n"
-                        "Your eyes barely adjust to the darkness around you.\n")
+                text = (
+                    "You wake up to the sound of dripping water from the ceiling.\n"
+                    "Your eyes barely adjust to the darkness around you.\n"
+                )
             case "Fire":
-                text = ("You wake up to the sound of crackling fire.\n"
-                        "Your eyes barely adjust to the brightness around you.\n")
+                text = (
+                    "You wake up to the sound of crackling fire.\n"
+                    "Your eyes barely adjust to the brightness around you.\n"
+                )
             case "Dust":
-                text = ("You wake up to the smell of dust.\n"
-                        "Your rub your itchy eyes.\n")
-                        
-        text += ("You get up and start planning your next step.\n"
-        "You realize there're 4 exists out of this room.")
-        typeText(text, 1)
-
-        firstRoomPass = 1
+                text = "You wake up to the smell of dust.\n" "Your rub your itchy eyes.\n"
+                
+        text += (
+            "You get up and start planning your next step.\n"
+            "You realize there're 4 exists out of this room."
+        )
+        
+        type_text(text, 1)
 
         Player.step()
 
     @staticmethod
-    def enterChestRoom():
+    def enter_chest_room():
         text = "You enter a chest room"
-        typeText(text, 2)
+        type_text(text, 2)
         Player.openChest()
     
     @classmethod
-    def enterEnemyRoom(cls):
+    def enter_enemy_room(cls):
         enemy = Enemy("Fire", "Goblin", 500, 1, 10)
         
         lost_won = 0
@@ -185,7 +232,7 @@ class Room():
                     damage = Player.attack()
                     enemy.enemy_hp -= damage
                     text = f"{enemy.enemy_name} health : {enemy.enemy_hp if enemy.enemy_hp > 0 else 0}"
-                    typeText(text, 3)     
+                    type_text(text, 3)     
                      
                     if enemy.enemy_hp <= 0:
                         lost_won = 1
@@ -201,18 +248,27 @@ class Room():
                 enemy_damage = enemy.attack()
                 Player.get_stats()["health"] -= enemy_damage
                 text = f"Your health = {Player.get_stats()["health"]}"
-                typeText(text, 3)
+                type_text(text, 3)
 
         match lost_won:
             case 1:
-                typeText(f"You succesfully defeat the {enemy.enemy_name}!", 2)
+                type_text(f"You succesfully defeat the {enemy.enemy_name}!", 2)
             case 0:
                 Player.die()           
             case 2:
                 pass
         
+        
 class Enemy:
-    def __init__(self, element: str, enemy_type: str, enemy_hp: int, enemy_min_attack: int, enemy_max_attack: int):
+    
+    def __init__(
+        self, 
+        element: str, 
+        enemy_type: str, 
+        enemy_hp: int, 
+        enemy_min_attack: int, 
+        enemy_max_attack: int
+    ):
         self.enemy_name = element + " " + enemy_type
         self.enemy_hp = enemy_hp
         self.enemy_min_attack = enemy_min_attack
@@ -222,7 +278,7 @@ class Enemy:
         enemy_damage = random.randint(self.enemy_min_attack, self.enemy_max_attack + 1)
         text = f"{self.enemy_name} did {enemy_damage} damage"
 
-        typeText(text, 3)
+        type_text(text, 3)
         
         return enemy_damage
 
@@ -244,7 +300,7 @@ class Enemy:
 #     def randomRoom(self):
 #         self.room = random.randint(0,2)
 #         if self.room == 0:
-#             typeText("\nEmpty room...\n",1)
+#             type_text("\nEmpty room...\n",1)
 #         elif self.room == 1:
 #             self.chest()
 #         else:
@@ -253,5 +309,5 @@ class Enemy:
 #             self.step()
 
 #     def enemyRoom(self):
-#         typeText(f"\nEnemy hp: {self.cur_enemy_hp} \nPlayer hp: {self.hp}\n",1)
-#         typeText("\nAttack or Flee(A/F)",1)
+#         type_text(f"\nEnemy hp: {self.cur_enemy_hp} \nPlayer hp: {self.hp}\n",1)
+#         type_text("\nAttack or Flee(A/F)",1)
