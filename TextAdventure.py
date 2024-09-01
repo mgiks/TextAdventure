@@ -212,7 +212,7 @@ class Room():
                 pass
         
 class Enemy:
-    def __init__(self, element, enemy_type, enemy_hp, enemy_min_attack, enemy_max_attack):
+    def __init__(self, element: str, enemy_type: str, enemy_hp: int, enemy_min_attack: int, enemy_max_attack: int):
         self.enemy_name = element + " " + enemy_type
         self.enemy_hp = enemy_hp
         self.enemy_min_attack = enemy_min_attack
@@ -225,8 +225,6 @@ class Enemy:
         typeText(text, 3)
         
         return enemy_damage
-
-Room.enterEnemyRoom()
 
 # class Room:
 #     def __init__(self):
