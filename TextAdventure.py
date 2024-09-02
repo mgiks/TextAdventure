@@ -24,23 +24,7 @@ def type_text(text, speed):
         time.sleep(delay)
     
     sys.stdout.write("\n")
-    
 
-class RandomOutput:
-    
-    elements = ["Water", "Fire", "Dust"]
-    booleans = [True, False]
-    
-    @classmethod
-    def get_random_bool(cls):
-        result = random.choice(cls.booleans)
-        return result
-
-    @classmethod
-    def get_random_element(cls):
-        result = random.choice(cls.elements)
-        return result
-        
     
 class Player:
     
@@ -49,7 +33,7 @@ class Player:
         "min_attack" : 10,
         "max_attack" : 20,
         "defense" : 0,
-        "luck" : 0
+        "luck" : 0,
     }
     
     coordinates = [(0,0)]
@@ -117,7 +101,7 @@ class Player:
         type_text("You can't do that", 3)
     
     @classmethod
-    def openChest(cls):
+    def open_chest(cls):
         type_text("\nOpen chest?(Y/N): ",1)
         choice = input().lower()
         chest_has_item = RandomOutput.get_random_bool()
@@ -143,24 +127,24 @@ class Player:
 class Item:
     
     items = {
-        "Strength":["Sword", "Gauntlet", "Dagger"],
-        "Defence":["Shield", "Helmet", "Chestplate"],
-        "Health":["Herbs", "Bandages", "Health Potion"],
-        "General":["Necklace", "Stone", "Fruit"],
+        "Strength": ["Sword", "Gauntlet", "Dagger"],
+        "Defence": ["Shield", "Helmet", "Chestplate"],
+        "Health": ["Herbs", "Bandages", "Health Potion"],
+        "General": ["Necklace", "Stone", "Fruit"],
     }
     
     item_specializations = {
-        "Strength":['min_attack', 'max_attack'], 
-        "Defence":['defense'],
-        "Health":['health'], 
-        "General":['health', 'min_attack', 'max_attack', 'defense', 'luck'],
+        "Strength": ['min_attack', 'max_attack'], 
+        "Defence": ['defense'],
+        "Health": ['health'], 
+        "General": ['health', 'min_attack', 'max_attack', 'defense', 'luck'],
     }
     
     item_qualities = {
-        "Weakened":1, 
-        "Common":5, 
-        "Rare":10, 
-        "Legendary":100
+        "Weakened": 1, 
+        "Common": 5, 
+        "Rare": 10, 
+        "Legendary": 100,
     }
     
     @classmethod
@@ -181,9 +165,6 @@ class Room():
     
     firstRoomPass = 0
     element = ""
-    
-    def get_random_room():
-        pass
     
     @staticmethod
     def enter_start_room():
@@ -262,12 +243,11 @@ class Room():
 class Enemy:
     
     def __init__(
-        self, 
-        element: str, 
+        self, element: str, 
         enemy_type: str, 
         enemy_hp: int, 
         enemy_min_attack: int, 
-        enemy_max_attack: int
+        enemy_max_attack: int,
     ):
         self.enemy_name = element + " " + enemy_type
         self.enemy_hp = enemy_hp
@@ -281,6 +261,28 @@ class Enemy:
         type_text(text, 3)
         
         return enemy_damage
+
+
+class RandomOutput:
+    
+    booleans = [True, False]
+    elements = ["Water", "Fire", "Dust"]
+    rooms = [Room.enter_chest_room, Room.enter_enemy_room]    
+    
+    @classmethod
+    def get_random_bool(cls):
+        result = random.choice(cls.booleans)
+        return result
+
+    @classmethod
+    def get_random_element(cls):
+        result = random.choice(cls.elements)
+        return result
+
+    @classmethod
+    def get_random_room(cls):
+        result = random.choice(cls.rooms)
+        result()
 
 # class Room:
 #     def __init__(self):
