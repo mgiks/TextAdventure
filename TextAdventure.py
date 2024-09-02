@@ -36,6 +36,14 @@ class Player:
         "luck" : 0,
     }
     
+    map_layout = [
+        ["*"] * 5, 
+        ["*"] * 5, 
+        ["*"] * 5, 
+        ["*"] * 5, 
+        ["*"] * 5, 
+    ]
+    
     coordinates = [(0,0)]
     
     @classmethod
@@ -48,20 +56,44 @@ class Player:
         return cls.stats
 
     @classmethod
+    def reset_map(cls):
+        cls.map_layout = [
+            ["*"] * 5, 
+            ["*"] * 5, 
+            ["*"] * 5, 
+            ["*"] * 5, 
+            ["*"] * 5, 
+        ]
+    
+    @classmethod
+    def print_map(cls):
+        coordinate = cls.coordinates[-1]
+        cls.map_layout[coordinate[1]][coordinate[0]] = "&"
+                
+        for row in range(len(cls.map_layout)):
+            cls.map_layout[row] = " ─ ".join(cls.map_layout[row])
+            print(cls.map_layout[row])
+            if row != len(cls.map_layout) - 1:
+                print(
+                    *("|  " for i in range(
+                        len(cls.map_layout[row].replace(" ", "").replace("─", ""))))
+                )
+                    
+    @classmethod
     def step(cls):
-        type_text("\nWhere are you headed?(F,B,L,R): ", 2)
+        type_text("\nWhere are you headed?(U,D,L,R): ", 2)
         direction = input().lower()
         
         match direction:
-            case "f":
-                print("Go forward")
-                cls.coordinates.append(
-                    (cls.coordinates[-1][0],cls.coordinates[-1][1] + 1)
-                )
-            case "b":
-                print("Go back")
+            case "u":
+                print("Go up")
                 cls.coordinates.append(
                     (cls.coordinates[-1][0],cls.coordinates[-1][1] - 1)
+                )
+            case "d":
+                print("Go down")
+                cls.coordinates.append(
+                    (cls.coordinates[-1][0],cls.coordinates[-1][1] + 1)
                 )
             case "l":
                 print("Go left")
@@ -284,6 +316,10 @@ class RandomOutput:
         result = random.choice(cls.rooms)
         result()
 
+
+Player.step()
+Player.step()
+Player.print_map()
 # class Room:
 #     def __init__(self):
 #         self.start_room = ""
