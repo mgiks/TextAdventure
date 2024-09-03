@@ -68,15 +68,20 @@ class Player:
     @classmethod
     def print_map(cls):
         coordinate = cls.coordinates[-1]
+        
+        position = cls.map_layout[coordinate[1]][coordinate[0]]
         cls.map_layout[coordinate[1]][coordinate[0]] = "&"
-                
-        for row in range(len(cls.map_layout)):
-            cls.map_layout[row] = " ─ ".join(cls.map_layout[row])
-            print(cls.map_layout[row])
+        position = cls.map_layout[coordinate[1]][coordinate[0]]
+            
+        full_map = cls.map_layout.copy()
+        
+        for row in range(len(full_map)):
+            full_map[row] = " ─ ".join(full_map[row])
+            print(full_map[row])
             if row != len(cls.map_layout) - 1:
                 print(
                     *("|  " for i in range(
-                        len(cls.map_layout[row].replace(" ", "").replace("─", ""))))
+                        len(full_map[row].replace(" ", "").replace("─", ""))))
                 )
                     
     @classmethod
@@ -316,10 +321,13 @@ class RandomOutput:
         result = random.choice(cls.rooms)
         result()
 
-
-Player.step()
 Player.step()
 Player.print_map()
+Player.step()
+Player.print_map()
+Player.step()
+Player.print_map()
+
 # class Room:
 #     def __init__(self):
 #         self.start_room = ""
