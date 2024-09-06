@@ -1,7 +1,7 @@
 import random
 import sys
 import time
-
+from copy import deepcopy
 
 def type_text(text, speed):
     delay = 0
@@ -27,23 +27,17 @@ def type_text(text, speed):
 
 
 class Player:
+
     stats = {
-        "health" : 100,
-        "min_attack" : 10,
-        "max_attack" : 20,
-        "defense" : 0,
-        "luck" : 0,
+        "health": 100,
+        "min_attack": 10,
+        "max_attack": 20,
+        "defense": 0,
+        "luck": 0,
     }
 
-    map_layout = [
-        ["*"] * 5,
-        ["*"] * 5,
-        ["*"] * 5,
-        ["*"] * 5,
-        ["*"] * 5,
-    ]
-
-    coordinates = [(0,0)]
+    coordinates = [(0, 0)]
+    inventory = []
 
     @classmethod
     def print_stats(cls):
@@ -54,33 +48,28 @@ class Player:
     def get_stats(cls):
         return cls.stats
 
-    @classmethod
-    def reset_map(cls):
-        cls.map_layout = [
-            ["*"] * 5,
-            ["*"] * 5,
-            ["*"] * 5,
-            ["*"] * 5,
-            ["*"] * 5,
-        ]
 
     @classmethod
     def print_map(cls):
         coordinate = cls.coordinates[-1]
 
-        position = cls.map_layout[coordinate[1]][coordinate[0]]
-        cls.map_layout[coordinate[1]][coordinate[0]] = "&"
-        position = cls.map_layout[coordinate[1]][coordinate[0]]
+        map_schema = deepcopy(Map.map_layout)
 
-        full_map = cls.map_layout.copy()
+        map_schema[coordinate[1]][coordinate[0]] = "▽"
 
-        for row in range(len(full_map)):
-            full_map[row] = " ─ ".join(full_map[row])
-            print(full_map[row])
-            if row != len(cls.map_layout) - 1:
+        # full_map = map_schema.copy()
+
+        for row in range(len(map_schema)):
+            map_schema[row] = " ─ ".join(map_schema[row])
+            print(map_schema[row])
+            if row != len(map_schema) - 1:
                 print(
-                    *("|  " for i in range(
-                        len(full_map[row].replace(" ", "").replace("─", ""))))
+                    *(
+                        "|  "
+                        for i in range(
+                            len(map_schema[row].replace(" ", "").replace("─", ""))
+                        )
+                    )
                 )
 
     @classmethod
@@ -92,22 +81,22 @@ class Player:
             case "u":
                 print("Go up")
                 cls.coordinates.append(
-                    (cls.coordinates[-1][0],cls.coordinates[-1][1] - 1)
+                    (cls.coordinates[-1][0], cls.coordinates[-1][1] - 1)
                 )
             case "d":
                 print("Go down")
                 cls.coordinates.append(
-                    (cls.coordinates[-1][0],cls.coordinates[-1][1] + 1)
+                    (cls.coordinates[-1][0], cls.coordinates[-1][1] + 1)
                 )
             case "l":
                 print("Go left")
                 cls.coordinates.append(
-                    (cls.coordinates[-1][0] - 1,cls.coordinates[-1][1])
+                    (cls.coordinates[-1][0] - 1, cls.coordinates[-1][1])
                 )
             case "r":
                 print("Go right")
                 cls.coordinates.append(
-                    (cls.coordinates[-1][0] + 1,cls.coordinates[-1][1])
+                    (cls.coordinates[-1][0] + 1, cls.coordinates[-1][1])
                 )
 
     @classmethod
@@ -138,7 +127,7 @@ class Player:
 
     @classmethod
     def open_chest(cls):
-        type_text("\nOpen chest?(Y/N): ",1)
+        type_text("\nOpen chest?(Y/N): ", 1)
         choice = input().lower()
         chest_has_item = RandomOutput.get_random_bool()
 
@@ -152,7 +141,7 @@ class Player:
     @staticmethod
     def die():
         type_text("\n\nYou are dead...\n", 0)
-        type_text("\nDo you want to restart?(Y/N): ",1)
+        type_text("\nDo you want to restart?(Y/N): ", 1)
         choice = input().lower()
         if choice == "y":
             pass
@@ -161,18 +150,19 @@ class Player:
 
 
 class Item:
+
     items = {
         "Strength": ["Sword", "Gauntlet", "Dagger"],
-        "Defence": ["Shield", "Helmet", "Chestplate"],
+        "Defense": ["Shield", "Helmet", "Chestplate"],
         "Health": ["Herbs", "Bandages", "Health Potion"],
         "General": ["Necklace", "Stone", "Fruit"],
     }
 
     item_specializations = {
-        "Strength": ['min_attack', 'max_attack'],
-        "Defence": ['defense'],
-        "Health": ['health'],
-        "General": ['health', 'min_attack', 'max_attack', 'defense', 'luck'],
+        "Strength": ["min_attack", "max_attack"],
+        "Defense": ["defense"],
+        "Health": ["health"],
+        "General": ["health", "min_attack", "max_attack", "defense", "luck"],
     }
 
     item_qualities = {
@@ -196,7 +186,8 @@ class Item:
         type_text(f"Your {item_specialization} has increased by {power}", 1)
 
 
-class Room():
+class Room:
+
     firstRoomPass = 0
     element = ""
 
@@ -217,7 +208,9 @@ class Room():
                     "Your eyes barely adjust to the brightness around you.\n"
                 )
             case "Dust":
-                text = "You wake up to the smell of dust.\n" "Your rub your itchy eyes.\n"
+                text = (
+                    "You wake up to the smell of dust.\n" "Your rub your itchy eyes.\n"
+                )
 
         text += (
             "You get up and start planning your next step.\n"
@@ -267,16 +260,37 @@ class Room():
 
         match lost_won:
             case 1:
-                type_text(f"You succesfully defeat the {enemy.enemy_name}!", 2)
+                type_text(f"You successfully defeat the {enemy.enemy_name}!", 2)
             case 0:
                 Player.die()
             case 2:
                 pass
 
+class Map:
+
+    map_layout = [
+        ["□"] + ["*"] * 4,
+        ["*"] * 5,
+        ["*"] * 5,
+        ["*"] * 5,
+        ["*"] * 5,
+    ]
+
+    @classmethod
+    def reset_map(cls):
+        cls.map_layout = [
+            ["*"] * 5,
+            ["*"] * 5,
+            ["*"] * 5,
+            ["*"] * 5,
+            ["*"] * 5,
+        ]
 
 class Enemy:
+
     def __init__(
-        self, element: str,
+        self,
+        element: str,
         enemy_type: str,
         enemy_hp: int,
         enemy_min_attack: int,
@@ -297,6 +311,7 @@ class Enemy:
 
 
 class RandomOutput:
+
     booleans = [True, False]
     elements = ["Water", "Fire", "Dust"]
     rooms = [Room.enter_chest_room, Room.enter_enemy_room]
@@ -320,9 +335,6 @@ Player.step()
 Player.print_map()
 Player.step()
 Player.print_map()
-Player.step()
-Player.print_map()
-
 # class Room:
 #     def __init__(self):
 #         self.start_room = ""
