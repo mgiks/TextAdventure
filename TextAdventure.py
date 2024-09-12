@@ -78,26 +78,51 @@ class Player:
         direction = input().lower()
 
         match direction:
+
             case "u":
-                print("Go up")
-                cls.coordinates.append(
-                    (cls.coordinates[-1][0], cls.coordinates[-1][1] - 1)
-                )
+                y_coordinate = cls.coordinates[-1][1] - 1
+                if y_coordinate >=  0:
+                    print("Go up")
+                    cls.coordinates.append(
+                        (cls.coordinates[-1][0], y_coordinate)
+                    )
+                else:
+                    cls.fail_action()
+                    cls.step()
+
             case "d":
-                print("Go down")
-                cls.coordinates.append(
-                    (cls.coordinates[-1][0], cls.coordinates[-1][1] + 1)
-                )
+                y_coordinate = cls.coordinates[-1][1] + 1
+                if y_coordinate < len(Map.map_layout[0]):
+                    print("Go down")
+                    cls.coordinates.append(
+                        (cls.coordinates[-1][0], y_coordinate)
+                    )
+                else:
+                    cls.fail_action()
+                    cls.step()
+
             case "l":
-                print("Go left")
-                cls.coordinates.append(
-                    (cls.coordinates[-1][0] - 1, cls.coordinates[-1][1])
-                )
+                x_coordinate = cls.coordinates[-1][0] - 1
+                if x_coordinate >= 0:
+                    print("Go left")
+                    cls.coordinates.append(
+                        (x_coordinate, cls.coordinates[-1][1])
+                    )
+                else:
+                    cls.fail_action()
+                    cls.step()
+
             case "r":
-                print("Go right")
-                cls.coordinates.append(
-                    (cls.coordinates[-1][0] + 1, cls.coordinates[-1][1])
-                )
+                x_coordinate = cls.coordinates[-1][0] + 1
+                if x_coordinate < len(Map.map_layout[0]):
+                    print("Go right")
+                    cls.coordinates.append(
+                        (x_coordinate, cls.coordinates[-1][1])
+                    )
+                else:
+                    cls.fail_action()
+                    cls.step()
+
 
     @classmethod
     def attack(cls):
@@ -123,7 +148,7 @@ class Player:
 
     @staticmethod
     def fail_action():
-        type_text("You can't do that", 3)
+        type_text("You can't do that", 2)
 
     @classmethod
     def open_chest(cls):
@@ -331,36 +356,6 @@ class RandomOutput:
         result = random.choice(cls.rooms)
         result()
 
-Player.step()
-Player.print_map()
-Player.step()
-Player.print_map()
-# class Room:
-#     def __init__(self):
-#         self.start_room = ""
-#         self.coordinates = [(0, 0)]
-#         self.direction = "f"
-#         self.room = 0
-#         self.hp = 100
-#         self.luck = 0.5
-#         self.attack_min = 0
-#         self.attack_max = 100
-#         self.cur_enemy = None
-#         self.cur_enemy_hp = 0
-#         self.list_of_items = []
-
-
-#     def randomRoom(self):
-#         self.room = random.randint(0,2)
-#         if self.room == 0:
-#             type_text("\nEmpty room...\n",1)
-#         elif self.room == 1:
-#             self.chest()
-#         else:
-#             self.enemy()
-#         if self.hp > 0:
-#             self.step()
-
-#     def enemyRoom(self):
-#         type_text(f"\nEnemy hp: {self.cur_enemy_hp} \nPlayer hp: {self.hp}\n",1)
-#         type_text("\nAttack or Flee(A/F)",1)
+while True:
+    Player.step()
+    Player.print_map()
