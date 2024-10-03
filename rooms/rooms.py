@@ -1,4 +1,4 @@
-import helpers.tools as tools
+from helpers.TextTyper.type_text import TextTyper
 from helpers.random_output import RandomElement
 from Player import Player
 from Enemy import Enemy
@@ -83,7 +83,7 @@ class StartRoom(Room):
             "You realize there're 4 exists out of this room."
         )
 
-        tools(text, 1)
+        TextTyper.type_text(text, 1)
 
         Player.step()
 
@@ -92,12 +92,15 @@ class ChestRoom(Room):
     @staticmethod
     def enter_room():
         text = "You enter a chest room"
-        tools(text, 2)
+        TextTyper.type_text(text, 2)
         Player.openChest()
 
 
 class EnemyRoom(Room):
-    pass
+    @staticmethod
+    def enter_room():
+        text = "You encounter an enemy!"
+        TextTyper.type_text(text, 2)
 
 
 class Fighting():
@@ -114,7 +117,7 @@ class Fighting():
                     damage = Player.attack()
                     enemy.enemy_hp -= damage
                     text = f"{enemy.enemy_name} health : {enemy.enemy_hp if enemy.enemy_hp > 0 else 0}"
-                    tools(text, 3)
+                    TextTyper.type_text(text, 3)
 
                     if enemy.enemy_hp <= 0:
                         lost_won = 1
@@ -130,11 +133,11 @@ class Fighting():
                 enemy_damage = enemy.attack()
                 Player.get_stats()["health"] -= enemy_damage
                 text = f"Your health = {Player.get_stats()["health"]}"
-                tools(text, 3)
+                TextTyper.type_text(text, 3)
 
         match lost_won:
             case 1:
-                tools(f"You successfully defeat the {enemy.enemy_name}!", 2)
+                TextTyper.type_text(f"You successfully defeat the {enemy.enemy_name}!", 2)
             case 0:
                 Player.die()
             case 2:
