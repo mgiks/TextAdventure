@@ -1,5 +1,5 @@
 import helpers.tools as tools
-from helpers.random_output import RandomOutput
+from helpers.random_output import RandomElement
 from Player import Player
 from Enemy import Enemy
 from abc import ABC, abstractmethod
@@ -10,15 +10,57 @@ class Room(ABC):
     element = ""
 
     @abstractmethod
-    def enter_room():
+    @staticmethod
+    def enter_room(cls):
         pass
+
+    def leave_room(cls):
+        type_text("\nWhere are you headed?(U,D,L,R): ", 2)
+        direction = input().lower()
+
+        match direction:
+            case "u":
+                y_coordinate = cls.coordinates[-1][1] - 1
+                if y_coordinate >= 0:
+                    print("Go up")
+                    cls.coordinates.append((cls.coordinates[-1][0], y_coordinate))
+                else:
+                    cls.fail_action()
+                    cls.step()
+
+            case "d":
+                y_coordinate = cls.coordinates[-1][1] + 1
+                if y_coordinate < len(Map.map_layout[0]):
+                    print("Go down")
+                    cls.coordinates.append((cls.coordinates[-1][0], y_coordinate))
+                else:
+                    cls.fail_action()
+                    cls.step()
+
+            case "l":
+                x_coordinate = cls.coordinates[-1][0] - 1
+                if x_coordinate >= 0:
+                    print("Go left")
+                    cls.coordinates.append((x_coordinate, cls.coordinates[-1][1]))
+                else:
+                    cls.fail_action()
+                    cls.step()
+
+            case "r":
+                x_coordinate = cls.coordinates[-1][0] + 1
+                if x_coordinate < len(Map.map_layout[0]):
+                    print("Go right")
+                    cls.coordinates.append((x_coordinate, cls.coordinates[-1][1]))
+                else:
+                    cls.fail_action()
+                    cls.step()
 
 
 class StartRoom(Room):
     @staticmethod
     def enter_room():
         Player.coordinates = [(0, 0)]
-        element = RandomOutput.get_random_element()
+        element = RandomElement.get_random_value()
 
         match element:
             case "Water":

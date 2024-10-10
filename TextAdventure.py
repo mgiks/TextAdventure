@@ -1,5 +1,5 @@
-from Player import Player
+from player_map import Map
 
-while True:
-    Player.step()
-    Player.print_map()
+Map.get_map([(2, 2)])
+
+# NOT READY

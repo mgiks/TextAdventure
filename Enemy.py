@@ -1,9 +1,9 @@
 import random
-from type_text import type_text
+from helpers.tools import type_text
+from entity import Entity
 
 
-class Enemy:
-
+class Enemy(Entity):
     def __init__(
         self,
         element: str,

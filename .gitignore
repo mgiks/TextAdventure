@@ -1,2 +1,11 @@
 # Ignore module junk
 __pycache__
+
+# Ruff cache
+.ruff_cache
+
+# Virtual Environment
+.venv
+
+# Venv-relater files
+.python-version
