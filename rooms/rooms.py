@@ -97,7 +97,7 @@ class ChestRoom(Room):
 
 
 class EnemyRoom(Room):
-    @classmethod
+    @staticmethod
     def enter_room(cls):
         enemy = Enemy("Fire", "Goblin", 500, 1, 10)
 

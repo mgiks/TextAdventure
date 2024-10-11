@@ -1,5 +1,3 @@
-import random
-from helpers.tools import TextTyper
 
 
 class Item:

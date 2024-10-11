@@ -1,6 +1,6 @@
 import random
 from abc import ABC, abstractmethod
-from ..item import Item
+from ..rooms.item import Item
 
 
 class RandomChooser(ABC):

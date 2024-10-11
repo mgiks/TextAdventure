@@ -1,5 +1,5 @@
 import unittest
-import player_map
+import entities.player_map as player_map
 
 
 class TestMap(unittest.TestCase):
